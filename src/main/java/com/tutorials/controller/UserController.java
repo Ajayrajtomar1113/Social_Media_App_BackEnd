@@ -43,8 +43,11 @@ public class UserController {
 	}
 	
 	@GetMapping("/api/users")
-	public List<User> getAllUsers(){
-		return userService.findAllUser();
+	public List<User> getAllUsers(@RequestHeader("Authorization") String jwt) throws Exception {
+
+	    User currentUser = userService.findUserByJwt(jwt);
+
+	    return userService.findAllUser();
 	}
 	
 	@PutMapping("/api/user/update")
@@ -73,6 +76,7 @@ public class UserController {
 	
 	@GetMapping("/api/users/profile")
 	public User getUserFromToken(@RequestHeader("Authorization") String jwt) {
+		 
 		User user = userService.findUserByJwt(jwt);
 		return user;
 	}

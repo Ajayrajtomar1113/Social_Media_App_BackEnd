@@ -97,16 +97,15 @@ public class UserServiceImplementation implements UserService {
 
 	@Override
 	public List<User> findAllUser() {
-		List<User> users = repo.findAll();
-		if(!users.isEmpty()) {
-			return users;
-		}
-		return null;
+	    return repo.findAll();
 	}
 
 
 	@Override
 	public User findUserByJwt(String jwt) {
+		if(jwt != null && jwt.startsWith("Bearer ")) {
+	        jwt = jwt.substring(7); // 🔥 IMPORTANT FIX
+	    }
 		String email = JwtProvider.getEmailFromJwtToken(jwt);
 		User user = repo.findByEmail(email);
 		return user;

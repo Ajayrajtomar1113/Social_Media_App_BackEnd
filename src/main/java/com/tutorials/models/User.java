@@ -3,12 +3,13 @@ package com.tutorials.models;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -19,115 +20,130 @@ import jakarta.persistence.Table;
 @Table(name = "users")
 public class User {
 
-	 @Id
-	    @GeneratedValue(strategy = GenerationType.AUTO)
-	    private Integer id;
 
-	    private String firstName;
-	    private String lastName;
+@Id
+@GeneratedValue(strategy = GenerationType.AUTO)
+private Integer id;
 
-	    @Column(unique = true)
-	    private String email;
+private String firstName;
+private String lastName;
 
-	    @JsonIgnore
-	    private String password;
+@Column(unique = true)
+private String email;
 
-	    private String gender;
+@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+private String password;
 
-	    @ManyToMany
-	    private List<Post> savedPost = new ArrayList<>();
+private String gender;
 
-	    @ElementCollection
-	    private List<Integer> followers = new ArrayList<>();
 
-	    @ElementCollection
-	    private List<Integer> followings = new ArrayList<>();
-    public User() {
-        
-    }
+@Enumerated(EnumType.STRING)
+private Role role;
 
-    public User(Integer id, String firstName, String lastName, String email, String password, String gender,
-                List<Integer> followers, List<Integer> followings) {
-        this.id = id;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-        this.password = password;
-        this.gender = gender;
-        this.followers = followers != null ? followers : new ArrayList<>();
-        this.followings = followings != null ? followings : new ArrayList<>();
-    }
+@ManyToMany
+private List<Post> savedPost = new ArrayList<>();
 
-    public Integer getId() {
-        return id;
-    }
+@ElementCollection
+private List<Integer> followers = new ArrayList<>();
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+@ElementCollection
+private List<Integer> followings = new ArrayList<>();
 
-    public String getFirstName() {
-        return firstName;
-    }
+public User() {}
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
+public User(Integer id, String firstName, String lastName, String email, String password,
+            String gender, Role role,
+            List<Integer> followers, List<Integer> followings) {
 
-    public String getLastName() {
-        return lastName;
-    }
+    this.id = id;
+    this.firstName = firstName;
+    this.lastName = lastName;
+    this.email = email;
+    this.password = password;
+    this.gender = gender;
+    this.role = role; 
+    this.followers = followers != null ? followers : new ArrayList<>();
+    this.followings = followings != null ? followings : new ArrayList<>();
+}
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
+public Integer getId() {
+    return id;
+}
 
-    public String getEmail() {
-        return email;
-    }
+public void setId(Integer id) {
+    this.id = id;
+}
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
+public String getFirstName() {
+    return firstName;
+}
 
-    public String getPassword() {
-        return password;
-    }
+public void setFirstName(String firstName) {
+    this.firstName = firstName;
+}
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
+public String getLastName() {
+    return lastName;
+}
 
-    public String getGender() {
-        return gender;
-    }
+public void setLastName(String lastName) {
+    this.lastName = lastName;
+}
 
-    public void setGender(String gender) {
-        this.gender = gender;
-    }
+public String getEmail() {
+    return email;
+}
 
-    public List<Integer> getFollowers() {
-        return followers;
-    }
+public void setEmail(String email) {
+    this.email = email;
+}
 
-    public void setFollowers(List<Integer> followers) {
-        this.followers = followers;
-    }
+public String getPassword() {
+    return password;
+}
 
-    public List<Integer> getFollowings() {
-        return followings;
-    }
+public void setPassword(String password) {
+    this.password = password;
+}
 
-    public void setFollowings(List<Integer> followings) {
-        this.followings = followings;
-    }
+public String getGender() {
+    return gender;
+}
 
-	public List<Post> getSavedPost() {
-		return savedPost;
-	}
+public void setGender(String gender) {
+    this.gender = gender;
+}
 
-	public void setSavedPost(List<Post> savedPost) {
-		this.savedPost = savedPost;
-	}
-    
+public Role getRole() {
+    return role;
+}
+
+public void setRole(Role role) {
+    this.role = role;
+}
+
+public List<Integer> getFollowers() {
+    return followers;
+}
+
+public void setFollowers(List<Integer> followers) {
+    this.followers = followers;
+}
+
+public List<Integer> getFollowings() {
+    return followings;
+}
+
+public void setFollowings(List<Integer> followings) {
+    this.followings = followings;
+}
+
+public List<Post> getSavedPost() {
+    return savedPost;
+}
+
+public void setSavedPost(List<Post> savedPost) {
+    this.savedPost = savedPost;
+}
+
 }

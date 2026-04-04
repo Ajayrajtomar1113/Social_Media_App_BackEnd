@@ -26,21 +26,22 @@ public class AppConfig {
 
 	@Bean
 	SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
-		
-		http.sessionManagement(management -> management.sessionCreationPolicy(
-				SessionCreationPolicy.STATELESS))
-        .authorizeHttpRequests(auth -> auth
-            .requestMatchers("/api/**").authenticated()
-            .anyRequest().permitAll())
-        .addFilterBefore(new JwtValidator(), BasicAuthenticationFilter.class)
-        	.csrf(csrf -> csrf.disable())
-        	.cors(cors->cors.configurationSource(corsConfigurationSource()));
-        
 
-		
-		return http.build();
-		
+
+	http.sessionManagement(management -> management.sessionCreationPolicy(
+	        SessionCreationPolicy.STATELESS))
+	    .authorizeHttpRequests(auth -> auth
+	        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+	        .requestMatchers("/api/**").authenticated()
+	        .anyRequest().permitAll()
+	    )
+	    .addFilterBefore(new JwtValidator(), BasicAuthenticationFilter.class)
+	    .csrf(csrf -> csrf.disable())
+	    .cors(cors -> cors.configurationSource(corsConfigurationSource()));
+
+	return http.build();
 	}
+
 	private CorsConfigurationSource corsConfigurationSource() {
 		
 		return new CorsConfigurationSource() {
