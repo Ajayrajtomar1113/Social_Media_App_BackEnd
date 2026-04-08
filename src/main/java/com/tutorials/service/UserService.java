@@ -23,6 +23,7 @@ public interface UserService {
 
 	public User findUserByJwt(String jwt);
 	
+	public User deleteUser(Integer userId);
 //	public User unFollowUser(Integer userId,Integer userId2) throws UserException;
 	
 }

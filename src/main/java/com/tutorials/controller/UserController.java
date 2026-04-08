@@ -81,4 +81,10 @@ public class UserController {
 		return user;
 	}
 	
+	@DeleteMapping("/api/deleteuser/id/{userId}")
+	public User deleteUser(@PathVariable Integer userId) {
+		
+	return userService.deleteUser(userId);
+		
+	}
 }

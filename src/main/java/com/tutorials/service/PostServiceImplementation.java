@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.tutorials.models.Post;
 import com.tutorials.models.User;
+import com.tutorials.repository.CommentRepository;
 import com.tutorials.repository.PostRepository;
 import com.tutorials.repository.UserRepository;
 
@@ -22,6 +23,8 @@ public class PostServiceImplementation implements PostService {
 	@Autowired
 	UserRepository userRepo;
 	
+	@Autowired
+	CommentRepository commentRepo;
 	@Override
 	public Post createNewPost(Post post, Integer userId) throws Exception {
 		Post newPost = new Post();
@@ -35,16 +38,33 @@ public class PostServiceImplementation implements PostService {
 	}
 
 	@Override
-	public String deletePost(Integer postId, Integer userId) throws Exception {
-		Post post = findPostById(postId);
-		User user = userService.findById(userId);
-		
-		if(post.getUser().getId() != user.getId()) {
-			throw new Exception("You can't delete another users's posts");
-		}
-		
-		postRepo.deleteById(postId);
-		return "Post deleted successfully";
+	public Post deletePost(Integer postId, Integer userId) throws Exception {
+
+	    Post post = findPostById(postId);
+	    User user = userService.findById(userId);
+
+	    // ✅ OWNER OR ADMIN
+	    if (!post.getUser().getId().equals(user.getId()) 
+	        && !user.getRole().equals("ADMIN")) {
+	        throw new Exception("You can't delete another user's post");
+	    }
+
+	    // 🔥 1. REMOVE LIKES
+	    post.getLiked().clear();
+
+	    // 🔥 2. REMOVE FROM SAVED POSTS (IMPORTANT)
+	    List<User> users = userRepo.findAll();
+	    for (User u : users) {
+	        u.getSavedPost().remove(post);
+	    }
+
+	    // 🔥 3. DELETE COMMENTS
+	    commentRepo.deleteByPost(post);
+
+	    // 🔥 4. DELETE POST
+	    postRepo.delete(post);
+
+	    return post;
 	}
 
 	@Override
