@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.tutorials.models.Post;
 import com.tutorials.models.User;
@@ -37,34 +38,29 @@ public class PostServiceImplementation implements PostService {
 		return newPost;
 	}
 
+	@Transactional
 	@Override
-	public Post deletePost(Integer postId, Integer userId) throws Exception {
+	public String deletePost(Integer postId, Integer userId) throws Exception {
 
 	    Post post = findPostById(postId);
 	    User user = userService.findById(userId);
 
-	    // ✅ OWNER OR ADMIN
-	    if (!post.getUser().getId().equals(user.getId()) 
-	        && !user.getRole().equals("ADMIN")) {
+	    if ((!post.getUser().getId().equals(user.getId()))
+	            && !user.getRole().equals("ADMIN")) {
 	        throw new Exception("You can't delete another user's post");
 	    }
 
-	    // 🔥 1. REMOVE LIKES
-	    post.getLiked().clear();
+	    postRepo.deleteLikesByPostId(postId);
 
-	    // 🔥 2. REMOVE FROM SAVED POSTS (IMPORTANT)
 	    List<User> users = userRepo.findAll();
 	    for (User u : users) {
 	        u.getSavedPost().remove(post);
 	    }
+	    userRepo.saveAll(users);
 
-	    // 🔥 3. DELETE COMMENTS
-	    commentRepo.deleteByPost(post);
-
-	    // 🔥 4. DELETE POST
 	    postRepo.delete(post);
 
-	    return post;
+	    return "Post deleted successfully";
 	}
 
 	@Override
@@ -114,5 +110,7 @@ public class PostServiceImplementation implements PostService {
 		
 		return postRepo.save(post);
 	}
+
+	
 
 }

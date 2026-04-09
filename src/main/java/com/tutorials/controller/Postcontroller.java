@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,15 +37,27 @@ public class Postcontroller {
 		return new ResponseEntity<>(createdPost,HttpStatus.ACCEPTED);
 	}
 	
-	@DeleteMapping("/api/post/{postId}")
-	public ResponseEntity<ApiResponse> deletePost(@PathVariable Integer postId,@RequestHeader("Authorization") String jwt) throws Exception {
-		
-		User user = userService.findUserByJwt(jwt);
-		String msg = postService.deletePost(postId, user.getId());
-		
-		ApiResponse res = new ApiResponse(msg,true);
 
-		return new ResponseEntity<ApiResponse>(res,HttpStatus.OK);
+	@RestController
+	public class PostController {
+
+	    @Autowired
+	    private SimpMessagingTemplate messagingTemplate;
+
+	    @DeleteMapping("/api/post/{postId}")
+	    public ResponseEntity<ApiResponse> deletePost(
+	            @PathVariable Integer postId,
+	            @RequestHeader("Authorization") String jwt) throws Exception {
+
+	        User user = userService.findUserByJwt(jwt);
+
+	        String msg = postService.deletePost(postId, user.getId());
+
+	        // 🔥 SEND WEBSOCKET EVENT
+	        messagingTemplate.convertAndSend("/topic/delete-post", postId);
+
+	        return ResponseEntity.ok(new ApiResponse(msg, true));
+	    }
 	}
 	
 	@GetMapping("/posts/{postId}")
