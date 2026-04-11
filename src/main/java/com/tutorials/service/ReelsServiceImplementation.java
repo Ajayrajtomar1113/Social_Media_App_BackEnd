@@ -41,5 +41,21 @@ public class ReelsServiceImplementation implements ReelsService{
 		
 		return reelsRepo.findByUserId(userId);
 	}
+	
+	public String deleteReel(Integer reelId, User user) {
+
+        Reels reel = reelsRepo.findById(reelId)
+                .orElseThrow(() -> new RuntimeException("Reel not found"));
+
+        if (!reel.getUser().getId().equals(user.getId())) {
+            throw new RuntimeException("You are not authorized to delete this reel");
+        }
+
+        user.getReels().remove(reel);
+
+        reelsRepo.delete(reel);
+        return "Reel deleted successfully";
+
+    }
 
 }
