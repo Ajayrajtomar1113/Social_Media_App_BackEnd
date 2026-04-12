@@ -50,13 +50,13 @@ public class AppConfig {
 			public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
 				CorsConfiguration cfg = new CorsConfiguration();
 				cfg.setAllowedOrigins(Arrays.asList(
-						"http://localhost:3000"));
-				cfg.setAllowedMethods(Arrays.asList(
-	                    "GET", "POST", "PUT", "DELETE", "OPTIONS"));
-				cfg.setAllowCredentials(true);
-				cfg.setAllowedHeaders(Collections.singletonList("*"));
-				cfg.setExposedHeaders(Arrays.asList(
-						"Authorization"));
+					    "http://localhost:3000",
+					    "https://social-media-chat-app-jg41.onrender.com"
+					));
+					cfg.setAllowedMethods(Arrays.asList("GET","POST","PUT","DELETE","OPTIONS"));
+					cfg.setAllowedHeaders(Arrays.asList("*"));
+					cfg.setAllowCredentials(true);
+					cfg.setExposedHeaders(Arrays.asList("Authorization"));
 				cfg.setMaxAge(3600L);
 				
 				return cfg;
