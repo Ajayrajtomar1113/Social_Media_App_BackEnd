@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.tutorials.models.Post;
+import com.tutorials.models.Role;
 import com.tutorials.models.User;
 import com.tutorials.repository.CommentRepository;
 import com.tutorials.repository.PostRepository;
@@ -45,8 +46,8 @@ public class PostServiceImplementation implements PostService {
 	    Post post = findPostById(postId);
 	    User user = userService.findById(userId);
 
-	    if ((!post.getUser().getId().equals(user.getId()))
-	            && !user.getRole().equals("ADMIN")) {
+	    if (!post.getUser().getId().equals(user.getId())
+	            && user.getRole() != Role.ADMIN) {
 	        throw new Exception("You can't delete another user's post");
 	    }
 
