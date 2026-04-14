@@ -76,7 +76,7 @@ public class Postcontroller {
     public ResponseEntity<List<Post>> findAllPost() {
 
         List<Post> posts = postService.findAllPost();
-        return new ResponseEntity<>(posts, HttpStatus.ACCEPTED);
+        return ResponseEntity.ok(posts);
     }
 
     // SAVE POST
