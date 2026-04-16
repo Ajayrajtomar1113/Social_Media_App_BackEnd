@@ -84,18 +84,39 @@ public class PostServiceImplementation implements PostService {
 		return postRepo.findAll();
 	}
 
+//	@Override
+//	public User savedPost(Integer postId, Integer userId) throws Exception {
+//		Post post = findPostById(postId);
+//		User user = userService.findById(userId);
+//		
+//		if(user.getSavedPost().contains(post)) {
+//			user.getSavedPost().remove(post);
+//		}else {
+//			user.getSavedPost().add(post);
+//		}
+//		userRepo.save(user);
+//		return user;
+//	}
 	@Override
 	public User savedPost(Integer postId, Integer userId) throws Exception {
-		Post post = findPostById(postId);
-		User user = userService.findById(userId);
-		
-		if(user.getSavedPost().contains(post)) {
-			user.getSavedPost().remove(post);
-		}else {
-			user.getSavedPost().add(post);
-		}
-		userRepo.save(user);
-		return user;
+
+	    Post post = findPostById(postId);
+	    User user = userService.findById(userId);
+
+	    boolean isSaved = user.getSavedPost()
+	            .stream()
+	            .anyMatch(p -> p.getId().equals(postId));
+
+	    if (isSaved) {
+	        // UNSAVE
+	        user.getSavedPost()
+	                .removeIf(p -> p.getId().equals(postId));
+	    } else {
+	        // SAVE
+	        user.getSavedPost().add(post);
+	    }
+
+	    return userRepo.save(user);
 	}
 
 	@Override

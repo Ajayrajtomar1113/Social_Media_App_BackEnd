@@ -120,41 +120,29 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    /* =========================
-       SAVED POSTS
-    ========================= */
     @ManyToMany
-    @JsonIgnore   // 🔥 IMPORTANT
+    @JoinTable(
+        name = "saved_posts",
+        joinColumns = @JoinColumn(name = "user_id"),
+        inverseJoinColumns = @JoinColumn(name = "post_id")
+    )
     private List<Post> savedPost = new ArrayList<>();
-
-    /* =========================
-       FOLLOW SYSTEM
-    ========================= */
     @ElementCollection
     private List<Integer> followers = new ArrayList<>();
 
     @ElementCollection
     private List<Integer> followings = new ArrayList<>();
 
-    /* =========================
-       USER POSTS
-    ========================= */
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore   // 🔥 MOST IMPORTANT (loop break)
     private List<Post> posts = new ArrayList<>();
 
-    /* =========================
-       USER REELS
-    ========================= */
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<Reels> reels = new ArrayList<>();
 
     public User() {}
 
-    /* =========================
-       GETTERS & SETTERS
-    ========================= */
 
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
